@@ -7,6 +7,7 @@ class Route {
         $this->routes = [];
         $this->params = [];
         $this->routesPatterns = [];
+        $this->wordsPattern = "[\w\d-_\ض\ص\ث\ق\ف\غ\ع\ه\خ\ح\ج\د\ش\س\ي\ب\ل\ا\ت\ن\م\ك\ط\ئ\ء\ؤ\ر\لا\ى\ة\و\ز\ظ\ذ\إ\أ\آ]+";
     }
 
     public function addRoute($route,$cont){
@@ -32,16 +33,20 @@ class Route {
                 $pattern = mb_substr($pattern, 0, -1);
                 $pattern = "/" . $pattern;
                 $pattern =  str_ireplace('\\', '/', $pattern);
-                $correct_route = $pattern === $route;
+                $correct_route = intval($pattern == $route);
             }else{
-                $correct_route = preg_match($pattern, $route);
+                // echo $pattern . "<br/>";
+                $correct_route = intval(preg_match($pattern, $route));
             }
-
-
+            // echo var_dump($pattern);
+            // echo var_dump($correct_route);
+            // echo "<br/>";
+            // echo var_dump($correct_route) . "<br/>";
             if($correct_route > 0){
                 $user_ok_route = true;
                 $uri = mb_substr($pattern, 1);
                 $uri = mb_substr($uri, 1, -1);
+                $uri = str_ireplace($this->wordsPattern, '[azAZ09]', $uri);
                 $uri = str_ireplace('\\', '', $uri);
                 $uri = str_ireplace('+', '', $uri);
                 $uri = str_ireplace('$', '', $uri);
@@ -97,14 +102,14 @@ class Route {
                     if($k === 0){
                         $final_route_regex = str_ireplace("/" , "\\/", $av_route);
                         if($k == count($params) - 1)
-                            $final_route_regex = str_ireplace("(" . $v . ")" , "[a-zA-Z0-9-_]+$", $final_route_regex);
+                            $final_route_regex = str_ireplace("(" . $v . ")" , $this->wordsPattern . "$", $final_route_regex);
                         else
-                            $final_route_regex = str_ireplace("(" . $v . ")" , "[a-zA-Z0-9-_]+", $final_route_regex);
+                            $final_route_regex = str_ireplace("(" . $v . ")" , $this->wordsPattern, $final_route_regex);
                     }
                     else if($k != count($params) - 1)
-                        $final_route_regex = str_ireplace("(" . $v . ")" , "[a-zA-Z0-9-_]+", $final_route_regex);
+                        $final_route_regex = str_ireplace("(" . $v . ")" , $this->wordsPattern, $final_route_regex);
                     else
-                        $final_route_regex = str_ireplace("(" . $v . ")" , "[a-zA-Z0-9-_]+$", $final_route_regex);
+                        $final_route_regex = str_ireplace("(" . $v . ")" , $this->wordsPattern . "$", $final_route_regex);
                 }
 
                 $final_route_regex = "/^" . $final_route_regex . "/";
@@ -134,19 +139,25 @@ class Route {
         $controller->loadModel($controller_name);
         
         if(method_exists($controller_name,$method)){
-            if (version_compare(PHP_VERSION, '7.0.0') <= 0) {
-                if(count($params) > 0)
-                    $controller->$controller_name($params);
-                else
-                    $controller->$controller_name();
-            }
-            else {
-                $method = $method . "";
-                if(count($params) > 0)
-                    $controller->$method($params);
-                else
-                    $controller->$method();
-            }
+            if(count($params) > 0)
+                $controller->$method($params);
+            else
+                $controller->$method();
+            /*
+              if (version_compare(PHP_VERSION, '7.0.0') <= 0) {
+              if(count($params) > 0)
+              $controller->$controller_name($params);
+              else
+              $controller->$controller_name();
+              }
+              else {
+              $method = $method . "";
+              if(count($params) > 0)
+              $controller->$method($params);
+              else
+              $controller->$method();
+              }
+            */
         }
         else
             die("Method : <b>'" . $method . "()'</b> dose not exists in class : <b>'" . ucfirst($controller_name) ."'</b>!");

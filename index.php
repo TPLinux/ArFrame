@@ -24,8 +24,6 @@ require_once("./libs/Route.php");
 
 // index controller
 $r->addRoute("/index","index@index");
-$r->addRoute("/get-index","index@index");
-$r->addRoute("/get_index","index@index");
 $r->addRoute("/users/(username)/slide/(slide_id)","index@userSlide");
 
 

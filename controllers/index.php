@@ -12,6 +12,7 @@ class Index extends Controller{
     }
 
     public function userSlide($data){
+        print_r($data);
         $this->view->data = $data;
         $this->view->view('user-slide');
     }
