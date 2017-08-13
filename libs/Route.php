@@ -7,7 +7,7 @@ class Route {
         $this->routes = [];
         $this->params = [];
         $this->routesPatterns = [];
-        $this->wordsPattern = "[\w\d-_\ض\ص\ث\ق\ف\غ\ع\ه\خ\ح\ج\د\ش\س\ي\ب\ل\ا\ت\ن\م\ك\ط\ئ\ء\ؤ\ر\لا\ى\ة\و\ز\ظ\ذ\إ\أ\آ]+";
+        $this->wordsPattern = "[\w\d-_p{\ض\ص\ث\ق\ف\غ\ع\ه\خ\ح\ج\د\ش\س\ي\ب\ل\ا\ت\ن\م\ك\ط\ئ\ء\ؤ\ر\لا\ى\ة\و\ز\ظ\ذ\إ\أ\آ}]+";
     }
 
     public function addRoute($route,$cont){
@@ -23,14 +23,14 @@ class Route {
             $controller = $cm[0];
             if(!isset($cm[1]) || strlen(trim($cm[1])) === 0)
                 die("You must specify the method for route:" . $this->route);
+
             $method = $cm[1];
             $params = $v['params'];
             $pattern = $v['pattern'];
 
-
             if(count($params) < 1){
                 $pattern = mb_substr($pattern, 3);
-                $pattern = mb_substr($pattern, 0, -1);
+                $pattern = mb_substr($pattern, 0, -2);
                 $pattern = "/" . $pattern;
                 $pattern =  str_ireplace('\\', '/', $pattern);
                 $correct_route = intval($pattern == $route);
@@ -38,21 +38,17 @@ class Route {
                 // echo $pattern . "<br/>";
                 $correct_route = intval(preg_match($pattern, $route));
             }
-            // echo var_dump($pattern);
+            // echo var_dump($pattern) . "<br/>";
             // echo var_dump($correct_route);
-            // echo "<br/>";
-            // echo var_dump($correct_route) . "<br/>";
             if($correct_route > 0){
                 $user_ok_route = true;
                 $uri = mb_substr($pattern, 1);
-                $uri = mb_substr($uri, 1, -1);
                 $uri = str_ireplace($this->wordsPattern, '[azAZ09]', $uri);
                 $uri = str_ireplace('\\', '', $uri);
                 $uri = str_ireplace('+', '', $uri);
                 $uri = str_ireplace('$', '', $uri);
                 $uri = str_ireplace('-', '', $uri);
                 $uri = str_ireplace('_', '', $uri);
-
                 $exploded_uri = explode('/', $uri);
                 $exploded_route = explode('/', $route);
                 $load_info = [
@@ -112,9 +108,9 @@ class Route {
                         $final_route_regex = str_ireplace("(" . $v . ")" , $this->wordsPattern . "$", $final_route_regex);
                 }
 
-                $final_route_regex = "/^" . $final_route_regex . "/";
+                $final_route_regex = "/^" . $final_route_regex . "/u";
             }else{
-                $final_route_regex = "/^" . str_ireplace("/", "\\", $av_route) . "/";
+                $final_route_regex = "/^" . str_ireplace("/", "\\", $av_route) . "/u";
             }
 
             $this->routesPatterns[] = [
