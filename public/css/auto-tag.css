@@ -1,0 +1,16 @@
+.tag-auto-style{
+	 cursor:pointer;
+	 color:#fff;
+	 padding:2px;
+	 padding-left:5px;
+	 padding-right:5px;
+	 background-color: #66d2a0;
+	 border: 1px solid #3bb365;
+	 border-radius:3px;
+}
+
+.tag-auto-style:hover{
+	 background-color: #fb6767;
+	 border: 1px solid #691616;
+	 border-radius:3px;
+}

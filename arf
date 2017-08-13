@@ -1,0 +1,80 @@
+<?php
+
+$controllerName = "controllers/" . strtolower($argv[1]) . ".php";
+if(!file_exists($controllerName)){
+
+    // create controller
+    $file = fopen($controllerName,'w');
+
+    if(strtolower($argv[1]) == "index"){
+        $txt = '<?php
+
+class '.ucfirst($argv[1]).' extends Controller{
+    
+    public function __construct(){
+        parent::__construct();
+        $this->view->dlang = $this->dlang;
+    }
+
+    public function index(){
+        $this->view->view("index");
+    }
+}
+?>';
+    }else{
+        $txt = '<?php
+
+class '.ucfirst($argv[1]).' extends Controller{
+    
+    public function __construct(){
+        parent::__construct();
+        $this->view->dlang = $this->dlang;
+    }
+
+    public function index(){
+        $this->view->view("'.strtolower($argv[1]).'_index");
+    }
+}
+?>';
+    }
+
+    
+    fwrite($file,$txt);
+    fclose($file);
+
+    
+    // create view index page
+    if(strtolower($argv[1]) == "index"){
+        $file = fopen("views/index.php",'w');
+    }else{
+        $file = fopen("views/".strtolower($argv[1])."_index.php",'w');
+    }
+    
+    $txt = "
+This is ".$argv[1]." page
+
+
+";
+    fwrite($file,$txt);
+    fclose($file);
+
+    // create a model
+    $file = fopen("models/".strtolower($argv[1])."_model.php",'w');
+    $txt = '<?php
+
+class '.ucfirst($argv[1]).'_Model extends Model{
+    
+    public function __construct(){
+        parent::__construct();
+    }
+}
+?>
+';
+    fwrite($file,$txt);
+    fclose($file);
+    echo "\n\nConroller CREATED!\n\n";
+}else{
+    echo "\n\nController is exists\n\n";
+}
+
+?>

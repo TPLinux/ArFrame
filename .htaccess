@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    <Files "*.txt">
+       Order Allow,Deny
+       Deny from all
+    </Files>
+    
+    RewriteEngine On
+    RewriteBase /ArFrame
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(?:application|modules|system|views|controllers|libs|arf|config|lang|models)\b.* index.php/$0 [L]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+
+</IfModule>
