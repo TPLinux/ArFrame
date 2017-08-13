@@ -7,7 +7,7 @@
     <body style="font-family:tahoma">
 	<b style="color:green">App URI:</b> /users/(username)/slide/(slide_id)
 	<br/>
-	<b style="color:green">User URL:</b> /users/(username)/slide/(slide_id)
+	<b style="color:green">User URL:</b> /<?php echo $_GET['route'] ?>
 	<br/>
 	<b style="color:green">Info & Parameters:</b> <?php print_r($this->data) ?>
 	<center>
